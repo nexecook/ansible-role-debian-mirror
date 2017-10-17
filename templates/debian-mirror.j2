@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# http://www.debian.org/mirror/ftpmirror
+
+{{ mirror_bin_dir }}/ftpsync && date +%s > '{{ mirror_timestamp_dir }}/debian'

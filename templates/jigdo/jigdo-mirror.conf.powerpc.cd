@@ -1,0 +1,12 @@
+jigdoDir={{ mirror_doc_root }}/debian-cd//8.8.0/powerpc/jigdo-cd
+imageDir={{ mirror_doc_root }}/debian-cd//8.8.0/powerpc/iso-cd
+tmpDir={{ mirror_tmp_dir }}/powerpc.cd
+logfile={{ mirror_log_dir }}/cdmirrorlogs/jigdo/powerpc.cd.log
+masterList={{ mirror_tmp_dir }}/master.list
+LOGROTATE=14
+jigdoFile="jigdo-file --cache=$tmpDir/jigdo-cache.db --cache-expiry=1w --report=noprogress --no-check-files"
+#debianMirror="file:/srv/ftp/pub/debian"
+debianMirror="file:{{ mirror_doc_root }}/debian"
+nonusMirror="file:/tmp"
+include='.'  # include all files,
+exclude='^$' # then exclude none

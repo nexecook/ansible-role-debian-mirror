@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# http://www.debian.org/CD/mirroring/
+
+# we're using the jigdo thing to build the ISOs
+
+LOCKFILE=/tmp/debian.lock
+
+if mkdir "$LOCKFILE" 2>/dev/null; then
+    trap 'rm -rf "$LOCKFILE"' EXIT
+    {{ mirror_bin_dir }}/cd-mirror >&2 &&
+      date +%s > '{{ mirror_timestamp_dir }}/debian-cd'
+else
+    cat <<EOF 1>&2
+ERROR: Another rsync is already running and has the lock file
+$LOCKFILE.
+EOF
+fi

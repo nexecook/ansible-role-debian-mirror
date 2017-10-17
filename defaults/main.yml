@@ -1,0 +1,8 @@
+---
+
+debian_mirror_source: "mirrors.kernel.org"
+debian_mirror_hostname: "{{ ansible_fqdn }}"
+debian_mirror_admin_email: "mirroradmin@{{ ansible_domain }}"
+debian_mirror_cron_disabled: true
+debian_mirror_cron_minute: "{{ 59 | random(seed=inventory_hostname) }}"
+debian_mirror_cron_hour: "7,13,19,1"

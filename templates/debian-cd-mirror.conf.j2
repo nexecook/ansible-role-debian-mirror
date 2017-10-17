@@ -1,0 +1,19 @@
+RSYNC_HOST="{{ debian_mirror_source }}"
+#RSYNC_HOST=debian.cse.msu.edu
+#RSYNC_HOST=cdimage.debian.org
+#RSYNC_HOST=mirror.us.leaseweb.net
+RSYNC_MODULE=debian-cd/
+# For authenticated rsync
+#RSYNC_PASSWORD=
+#RSYNC_USER=
+TO="{{ mirror_doc_root }}/debian-cd/"
+ERRORMAIL="{{ debian_mirror_admin_email }}"
+MIRRORNAME="{{ debian_mirror_hostname }}"
+DELETEFIRST=1
+EXCLUDE=
+HUB=false
+LOGROTATE=14
+tmpDirBase="{{ mirror_tmp_dir }}"
+LOGDIR=$HOME/log/cdmirrorlogs
+jigdoConf=$HOME/etc/jigdo/jigdo-mirror.conf
+masterList=$tmpDirBase/master.list

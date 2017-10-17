@@ -1,0 +1,124 @@
+---
+
+- name: Install Update CRON
+  template:
+    src="debian-mirror.j2"
+    dest="{{ mirror_cron_dir }}/debian-mirror"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0700
+
+- name: Install Debian-cd Update CRON
+  template:
+    src="debian-cd-mirror.j2"
+    dest="{{ mirror_cron_dir }}/debian-cd-mirror"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0700
+
+- name: Install cd-mirror Script
+  copy:
+    src="cd-mirror"
+    dest="{{ mirror_bin_dir }}/cd-mirror"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0700
+
+- name: Install cd-mirror Config File
+  template:
+    src="debian-cd-mirror.conf.j2"
+    dest="{{ mirror_etc_dir }}/debian-cd-mirror.conf"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0700
+
+- name: Install ftpsync Script
+  copy:
+    src="ftpsync"
+    dest="{{ mirror_bin_dir }}/ftpsync"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0700
+
+- name: Install ftpsync Config File
+  template:
+    src="ftpsync.conf.j2"
+    dest="{{ mirror_etc_dir }}/ftpsync.conf"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0700
+
+- name: Install jigdo-mirror Script
+  copy:
+    src="jigdo-mirror"
+    dest="{{ mirror_bin_dir }}/jigdo-mirror"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0700
+
+- name: Install runmirrors Script
+  copy:
+    src="runmirrors"
+    dest="{{ mirror_bin_dir }}/runmirrors"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0700
+
+- name: Install common Script
+  copy:
+    src="common"
+    dest="{{ mirror_etc_dir }}/common"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0700
+
+- name: Ensure Jigdo Config Directory Exists
+  file:
+    dest="{{ mirror_etc_dir }}/jigdo"
+    state="directory"
+
+- name: Copy Each Jigdo Config Over
+  template:
+    src="{{ item }}"
+    dest="{{ mirror_etc_dir }}/jigdo"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0600
+  with_fileglob:
+    - "{{ role_path }}/templates/jigdo/*"
+
+- name: Setup CRON Schedule
+  cron:
+    name="Debian"
+    minute="{{ debian_mirror_cron_minute }}"
+    hour="{{ debian_mirror_cron_hour }}"
+    user="{{ mirror_unix_user }}"
+    state="present"
+    job="{ {{ mirror_cron_dir }}/debian-mirror; {{ mirror_cron_dir }}/debian-cd-mirror; } >/dev/null 2>&1"
+    disabled="{{ debian_mirror_cron_disabled }}"
+
+- stat:
+    path="{{ mirror_timestamp_dir }}/debian"
+  register: tsfile
+
+- name: Seed Timestamp File
+  copy:
+    content="0"
+    dest="{{ mirror_timestamp_dir }}/debian"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0644
+  when: not tsfile.stat.exists
+
+- stat:
+    path="{{ mirror_timestamp_dir }}/debian-cd"
+  register: tsfile
+
+- name: Seed Timestamp File
+  copy:
+    content="0"
+    dest="{{ mirror_timestamp_dir }}/debian-cd"
+    owner="{{ mirror_unix_user }}"
+    group="{{ mirror_unix_group }}"
+    mode=0644
+  when: not tsfile.stat.exists
